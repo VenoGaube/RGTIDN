@@ -1,14 +1,92 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title> WebGL - Simple triangle</title>
-        <script type="text/javascript" src='app.js'> </script>
-    </head>
+<head>
+    <script src="jquery.js"></script>
 
-    <body>
-        <canvas id="drawing-board" width = "700" height = "700" style = "border:1px solid #c3c3c3c3;"></canvas>
-        <script>
-            draw();
-        </script>
-    </body>
+   <script>
 
+        var vertexInfo = [];
+        var connectionInfo = [];
+
+        $(function () {
+            document.getElementById('file').onchange = function () {
+                    var file = this.files[0];
+                    var reader = new FileReader();
+                    //PREBERI VNEŠENO DATOTEKO
+                    reader.onload = function (progressEvent) {
+                        // Entire file
+                        //console.log(this.result);
+                        // By lines
+                        var lines = this.result.split('\n');
+                        var list = [];
+                        for (var line = 0; line < lines.length; line++) {
+                            list.push(lines[line]);
+                        }
+
+                      //  console.log(lines.length);
+                        //console.log(lines);
+                        var povezave = [];
+                        var koordinate = [];
+
+                        var stevecPovezav = 0;
+                        var stevecKoordinat = 0;
+
+                        for(var i = 0; i < lines.length; i++){
+                            var lineInfo = lines[i].split(" ");
+                            console.log(lines[i][0]);
+
+                            if(lines[i][0] == 'v'){
+                                console.log("gg");
+                                for(var j = 1; j < line.length; j++){
+                                    console.log(vertexInfo[stevecKoordinat] = lineInfo);
+                                    stevecKoordinat++;
+                                }
+                            }
+                            
+                            else if(lines[i][0] == 'f'){
+                                for(var j = 1; j < line.length; j++){
+                                    window.connectionInfo[stevecPovezav] = lineInfo;
+                                    stevecKoordinat++;
+                                }
+                            }
+                        }
+
+                        
+
+//POJDI ČEZ PREBRANE VRSTICE DATOTEKE
+                    
+//draw(window.vertexInfo, window.connectionInfo, null);
+                    };
+            reader.readAsText(file);
+            };
+        });
+    </script>
+</head>
+    
+<body>
+        <form id="form1" style="border:1px solid black; margin-left: 25%;max-width: 420px; padding-left: 82px">
+
+            </br>
+            <div>
+            <p> <b>PLEASE CHOOSE A FILE WITH THE OBJECT:</b>
+                <input type="file" name="file" id="file"/>
+            </P>
+            </div>
+            </br>
+        </form>
+        <canvas id="myCanvas" width="500" height="500" style="border:2px solid #000000; margin-left: 25%"></canvas>
+        <div id="testID" style="border:1px solid black; margin-left: 25%;max-width: 420px; padding-left: 82px; margin-top: -4px">
+            <h3>INSTRUCTIONS:</h3>
+            <p>- ARROW UP: &emsp;&emsp;&nbsp;ROTATE UP</br>
+            - ARROW DOWN: &nbsp;ROTATE DOWN</br>
+            - ARROW LEFT: &nbsp;&nbsp;&nbsp;&nbsp;ROTATE LEFT</br>
+            - ARROW RIGHT: &nbsp;ROTATE RIGHT</br>
+            - KEY W: &emsp;&emsp;&emsp;&emsp;MOVE OBJECT UP</br>
+            - KEY A: &nbsp;&emsp;&emsp;&emsp;&emsp;MOVE OBJECT LEFT</br>
+            - KEY S: &nbsp;&emsp;&emsp;&emsp;&emsp;MOVE OBJECT DOWN</br>
+            - KEY D: &emsp;&emsp;&emsp;&emsp;MOVE OBJECT RIGHT</br>
+            - KEY Q: &emsp;&emsp;&emsp;&emsp;ZOOM OUT</br>
+            - KEY E: &nbsp;&emsp;&emsp;&emsp;&emsp;ZOOM IN</br></p>
+        </div>
+</body>
 </html>
