@@ -12,50 +12,64 @@
             document.getElementById('file').onchange = function () {
                     var file = this.files[0];
                     var reader = new FileReader();
-                    //PREBERI VNEŠENO DATOTEKO
+                    //preberi datoteko
                     reader.onload = function (progressEvent) {
-                        // Entire file
-                        //console.log(this.result);
-                        // By lines
+                       
                         var lines = this.result.split('\n');
-                        var list = [];
+                        var list = new Array();
                         for (var line = 0; line < lines.length; line++) {
                             list.push(lines[line]);
                         }
+            
+                        window.connectionInfo.length = (lines.length-1)/2
+                        global_length = window.connectionInfo.length;                         
+                        
+                        //Obema globalnima array-ema vsako polje definiram kot array
+                        //da lahko kasneje noter pusham kreirane arraye                    
+                        for(var i = 0; i < connectionInfo.length; i++){
+                            window.vertexInfo[i] = new Array();
+                        }
+                        for(var i = 0; i < connectionInfo.length; i++){
+                            window.connectionInfo[i] = new Array();
+                        }
 
-                      //  console.log(lines.length);
-                        //console.log(lines);
-                        var povezave = [];
-                        var koordinate = [];
+                        var povezave = new Array();
+                        var koordinate = new Array();
 
                         var stevecPovezav = 0;
-                        var stevecKoordinat = 0;
+                        var stevecInfo = 0;
 
                         for(var i = 0; i < lines.length; i++){
                             var lineInfo = lines[i].split(" ");
-                            console.log(lines[i][0]);
+                            var line_length = lineInfo.length;
 
+                            var temp = new Array();
+                            temp.length = line_length-1;
+                            
+                            console.log("LineInfo = " + lineInfo);
                             if(lines[i][0] == 'v'){
-                                console.log("gg");
-                                for(var j = 1; j < line.length; j++){
-                                    console.log(vertexInfo[stevecKoordinat] = lineInfo);
-                                    stevecKoordinat++;
+                                
+                                // Dobim array temp, ki vsebuje info o koordinatah vozlisca
+                                for(var j = 1; j < line_length; j++){   
+                                    temp[j-1] = lineInfo[j];
                                 }
+                                console.log("type of global array connectionInfo = " + typeof(vertexInfo[0]));                            
+                                window.vertexInfo[stevecInfo].push(temp);
+                                // Povecam stevec global array-a, ki hrani informacije o vseh koordinatah vseh vozlisch
+                                stevecInfo++;                                                        
+                            }
+                        
+                            else if(lines[i][0] == 'f'){
+                                for(var j = 1; j < line_length; j++){
+                                    temp[j-1] = lineInfo[j];
+                                }
+                               // console.log("temp povezave = " + temp);
+                               window.connectionInfo[stevecPovezav].push(temp); 
+                               stevecPovezav++;
+                                //console.log("type elementa temp pri povezavah = " + typeof(temp));
                             }
                             
-                            else if(lines[i][0] == 'f'){
-                                for(var j = 1; j < line.length; j++){
-                                    window.connectionInfo[stevecPovezav] = lineInfo;
-                                    stevecKoordinat++;
-                                }
-                            }
                         }
-
-                        
-
-//POJDI ČEZ PREBRANE VRSTICE DATOTEKE
-                    
-//draw(window.vertexInfo, window.connectionInfo, null);
                     };
             reader.readAsText(file);
             };
