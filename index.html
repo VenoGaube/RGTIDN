@@ -87,9 +87,11 @@
 
                     }
 
-                    console.log(window.vertexInfo[0][1]);
-                    for (var i = 0; i < window.vertexInfo.length; i++) {
-                        console.log(window.vertexInfo[0][i]);
+                     for (var i = 0; i < window.vertexInfo.length; i++) {
+                        // console.log(window.vertexInfo[i]);
+                        for (var j = 0; j < window.vertexInfo[i].length; j++) {
+                            console.log(parseFloat(window.vertexInfo[i][j]));
+                        }
                     }
                     /*
                     ctx.beginPath();
