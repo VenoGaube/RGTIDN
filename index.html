@@ -1,106 +1,121 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <script src="jquery.js"></script>
+</head>
 
-   <script>
+<body>
+    <form id="file_selector" style="border:2px solid #008b8b; margin-left: 15%;max-width: 718px; padding-left: 82px">
 
+        </br>
+        <div>
+            <p> <b>PLEASE CHOOSE A FILE WITH THE OBJECT:</b>
+                <input type="file" name="file" id="file" />
+            </P>
+        </div>
+        </br>
+    </form>
+
+    <canvas id="myCanvas" width="800" height="800" style="border:2px solid #008b8b; margin-left: 15%"></canvas>
+
+    <script>
         var vertexInfo = [];
         var connectionInfo = [];
 
-        $(function () {
-            document.getElementById('file').onchange = function () {
-                    var file = this.files[0];
-                    var reader = new FileReader();
-                    //preberi datoteko
-                    reader.onload = function (progressEvent) {
-                       
-                        var lines = this.result.split('\n');
-                        var list = new Array();
-                        for (var line = 0; line < lines.length; line++) {
-                            list.push(lines[line]);
-                        }
-            
-                        window.connectionInfo.length = (lines.length-1)/2
-                        global_length = window.connectionInfo.length;                         
-                        
-                        //Obema globalnima array-ema vsako polje definiram kot array
-                        //da lahko kasneje noter pusham kreirane arraye                    
-                        for(var i = 0; i < connectionInfo.length; i++){
-                            window.vertexInfo[i] = new Array();
-                        }
-                        for(var i = 0; i < connectionInfo.length; i++){
-                            window.connectionInfo[i] = new Array();
-                        }
+        var canvas = document.getElementById('myCanvas');
 
-                        var povezave = new Array();
-                        var koordinate = new Array();
+        $(function() {
+            document.getElementById('file').onchange = function() {
+                var ctx = canvas.getContext("2d");
 
-                        var stevecPovezav = 0;
-                        var stevecInfo = 0;
+                var centerX = canvas.width / 2;
+                var centerY = canvas.height / 2;
 
-                        for(var i = 0; i < lines.length; i++){
-                            var lineInfo = lines[i].split(" ");
-                            var line_length = lineInfo.length;
+                var file = this.files[0];
+                var reader = new FileReader();
+                //preberi datoteko
+                reader.onload = function(progressEvent) {
 
-                            var temp = new Array();
-                            temp.length = line_length-1;
-                            
-                            console.log("LineInfo = " + lineInfo);
-                            if(lines[i][0] == 'v'){
-                                
-                                // Dobim array temp, ki vsebuje info o koordinatah vozlisca
-                                for(var j = 1; j < line_length; j++){   
-                                    temp[j-1] = lineInfo[j];
-                                }
-                                console.log("type of global array connectionInfo = " + typeof(vertexInfo[0]));                            
-                                window.vertexInfo[stevecInfo].push(temp);
-                                // Povecam stevec global array-a, ki hrani informacije o vseh koordinatah vseh vozlisch
-                                stevecInfo++;                                                        
+                    var lines = this.result.split('\n');
+                    var list = new Array();
+                    for (var line = 0; line < lines.length; line++) {
+                        list.push(lines[line]);
+                    }
+
+                    window.connectionInfo.length = (lines.length - 1) / 2
+                    global_length = window.connectionInfo.length;
+
+                    //Obema globalnima array-ema vsako polje definiram kot array
+                    //da lahko kasneje noter pusham kreirane arraye                    
+                    for (var i = 0; i < connectionInfo.length; i++) {
+                        window.vertexInfo[i] = new Array();
+                    }
+                    for (var i = 0; i < connectionInfo.length; i++) {
+                        window.connectionInfo[i] = new Array();
+                    }
+                    var povezave = new Array();
+                    var koordinate = new Array();
+                    var stevecPovezav = 0;
+                    var stevecInfo = 0;
+                    for (var i = 0; i < lines.length; i++) {
+                        var lineInfo = lines[i].split(" ");
+                        var line_length = lineInfo.length;
+                        var temp = new Array();
+                        temp.length = line_length - 1;
+
+                        //console.log("LineInfo = " + lineInfo);
+                        if (lines[i][0] == 'v') {
+
+                            // Dobim array temp, ki vsebuje info o koordinatah vozlisca
+                            for (var j = 1; j < line_length; j++) {
+                                temp[j - 1] = lineInfo[j];
                             }
-                        
-                            else if(lines[i][0] == 'f'){
-                                for(var j = 1; j < line_length; j++){
-                                    temp[j-1] = lineInfo[j];
-                                }
-                               // console.log("temp povezave = " + temp);
-                               window.connectionInfo[stevecPovezav].push(temp); 
-                               stevecPovezav++;
-                                //console.log("type elementa temp pri povezavah = " + typeof(temp));
+                            // console.log("type of global array connectionInfo = " + typeof(vertexInfo[0]));
+                            window.vertexInfo[stevecInfo].push(temp);
+                            // Povecam stevec global array-a, ki hrani informacije o vseh koordinatah vseh vozlisch
+                            stevecInfo++;
+                        } else if (lines[i][0] == 'f') {
+                            for (var j = 1; j < line_length; j++) {
+                                temp[j - 1] = lineInfo[j];
                             }
-                            
+                            // console.log("temp povezave = " + temp);
+                            window.connectionInfo[stevecPovezav].push(temp);
+                            stevecPovezav++;
+                            //console.log("type elementa temp pri povezavah = " + typeof(temp));
                         }
-                    };
-            reader.readAsText(file);
+
+                    }
+
+                    console.log(window.vertexInfo[0][1]);
+                    for (var i = 0; i < window.vertexInfo.length; i++) {
+                        console.log(window.vertexInfo[0][i]);
+                    }
+                    /*
+                    ctx.beginPath();
+                    for (var i = 0; i < window.vertexInfo.length; i++) {
+                        if (i == 0) {
+                            console.log("sem v i = 0");
+                            console.log("koordinata x = " + centerX + parseFloat(window.vertexInfo[i][0]));
+                            console.log("koordinata y = " + centerY + parseFloat(window.vertexInfo[i][1]));
+                            ctx.moveTo(centerX + parseFloat(window.vertexInfo[i][0]), centerY + parseFloat(window.vertexInfo[i][1]));
+                        } else {
+                            console.log("sem v i = " + i);
+                            console.log("koordinata x = " + centerX + parseFloat(window.vertexInfo[i][0]));
+                            console.log("koordinata y = " + centerY + parseFloat(window.vertexInfo[i][1]));
+                            ctx.lineTo(centerX + parseFloat(window.vertexInfo[i][0]), centerY + parseFloat(window.vertexInfo[i][1]));
+                        }
+                    }
+                    ctx.stroke();
+                    */
+
+                };
+                reader.readAsText(file);
             };
         });
     </script>
-</head>
-    
-<body>
-        <form id="form1" style="border:1px solid black; margin-left: 25%;max-width: 420px; padding-left: 82px">
 
-            </br>
-            <div>
-            <p> <b>PLEASE CHOOSE A FILE WITH THE OBJECT:</b>
-                <input type="file" name="file" id="file"/>
-            </P>
-            </div>
-            </br>
-        </form>
-        <canvas id="myCanvas" width="500" height="500" style="border:2px solid #000000; margin-left: 25%"></canvas>
-        <div id="testID" style="border:1px solid black; margin-left: 25%;max-width: 420px; padding-left: 82px; margin-top: -4px">
-            <h3>INSTRUCTIONS:</h3>
-            <p>- ARROW UP: &emsp;&emsp;&nbsp;ROTATE UP</br>
-            - ARROW DOWN: &nbsp;ROTATE DOWN</br>
-            - ARROW LEFT: &nbsp;&nbsp;&nbsp;&nbsp;ROTATE LEFT</br>
-            - ARROW RIGHT: &nbsp;ROTATE RIGHT</br>
-            - KEY W: &emsp;&emsp;&emsp;&emsp;MOVE OBJECT UP</br>
-            - KEY A: &nbsp;&emsp;&emsp;&emsp;&emsp;MOVE OBJECT LEFT</br>
-            - KEY S: &nbsp;&emsp;&emsp;&emsp;&emsp;MOVE OBJECT DOWN</br>
-            - KEY D: &emsp;&emsp;&emsp;&emsp;MOVE OBJECT RIGHT</br>
-            - KEY Q: &emsp;&emsp;&emsp;&emsp;ZOOM OUT</br>
-            - KEY E: &nbsp;&emsp;&emsp;&emsp;&emsp;ZOOM IN</br></p>
-        </div>
+
 </body>
+
 </html>
