@@ -3,9 +3,13 @@
 
 <head>
     <script src="jquery.js"></script>
+
 </head>
 
 <body>
+    <script src="gl-matrix-min.js"></script>
+    <script src="gl-matrix.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.0.0/gl-matrix-min.js"></script>
     <form id="file_selector" style="border:2px solid #008b8b; margin-left: 15%;max-width: 718px; padding-left: 82px">
 
         </br>
@@ -23,7 +27,7 @@
         var vertexInfo = [];
         var connectionInfo = [];
         var oneUnit = 100;
-
+        var cameraPosition = [0, 0, -8];
 
         var canvas = document.getElementById('myCanvas');
         var ctx = canvas.getContext("2d");
@@ -100,13 +104,38 @@
             };
         });
 
+        $(document).ready(function() {
+            window.addEventListener("keypress", keyPressHandler, false);
+        });
+
+        function keyPressHandler(event) {
+            var keyCode = event.keyCode;
+            if (keyCode == 119 || keyCode == 87) {
+                translate(0, 1, 0);
+                console.log("MOVE UP");
+            }
+            if (keyCode == 115 || keyCode == 83) {
+                console.log("MOVE DOWN");
+            }
+            if (keyCode == 97 || keyCode == 65) {
+                console.log("MOVE LEFT");
+            }
+            if (keyCode == 100 || keyCode == 68) {
+                console.log("MOVE RIGHT");
+            }
+        }
 
         function draw(vertexInfo, connectionInfo) {
+
             ctx.beginPath();
             console.log(typeof(centerX));
             console.log(typeof(parseInt(window.vertexInfo[1][0])));
 
+            var matrix = glMatrix.mat4.create();
+            console.log(matrix);
 
+
+            /*
             for (var i = 0; i < window.vertexInfo.length; i++) {
                 if (i == 0) {
                     console.log("sem v i = 0");
@@ -121,10 +150,71 @@
                 }
             }
             ctx.stroke();
+            */
+        }
+
+        function rotateX(alpha) {
+
+        }
+
+        function rotateY(alpha) {
+
+        }
+
+        function rotateZ(alpha) {
+
+        }
+
+        function translate(dx, dy, dz) {
+            var translateMatrix = glMatrix.mat4.create();
+            var premikTranslateMatrike = 0;
+            translateMatrix[3] = dx;
+            translateMatrix[7] = dy;
+            translateMatrix[11] = dz;
+            console.log(window.vertexInfo);
+            console.log(translateMatrix);
+            var temp = new Array(4);
+
+            for (var i = 0; i < window.vertexInfo.length; i++) {
+                //Podatke iz 3 koordinat razširimo na 4 in na 3. mesto v arrayju pripnemo vrednost 1 (w = 1)
+                for (var k = 0; k < 3; k++) {
+                    temp[k] = parseInt(window.vertexInfo[i][k]);
+                }
+                temp[3] = 1;
+                console.log(temp);
+
+                var sum = 0;
+                for (var j = 0 + premikTranslateMatrike; j < 4; j++) {
+                    sum += translateMatrix[j + premikTranslateMatrike] * temp[j];
+                    console.log("sum = " + sum);
+                }
+                premikTranslateMatrike += 4;
+
+                window.vertexInfo[i] = sum;
+            }
+
+            console.log(window.vertexInfo);
+        }
+
+        function scale(sx, sy, sz) {
+
+        }
+
+        function perpective(d) {
+
         }
     </script>
 
 
 </body>
+
+<footer style="border:2px solid #008b8b; margin-left: 15%;max-width: 718px; padding-left: 82px">
+
+    <!--document.getElementById.addEventListener("keypress", myScript); -->
+    <p>
+        Press W: Move up Press <br>Press S: Move down <br>Press D: Move right <br>Press A: Move left<br>
+    </p>
+
+</footer>
 
 </html>
