@@ -22,15 +22,20 @@
     <script>
         var vertexInfo = [];
         var connectionInfo = [];
+        var oneUnit = 100;
+
 
         var canvas = document.getElementById('myCanvas');
-
+        var ctx = canvas.getContext("2d");
+        ctx.translate(400, 400);
+        ctx.scale(1, -1);
         $(function() {
             document.getElementById('file').onchange = function() {
-                var ctx = canvas.getContext("2d");
+
 
                 var centerX = canvas.width / 2;
                 var centerY = canvas.height / 2;
+
 
                 var file = this.files[0];
                 var reader = new FileReader();
@@ -49,11 +54,12 @@
                     //Obema globalnima array-ema vsako polje definiram kot array
                     //da lahko kasneje noter pusham kreirane arraye                    
                     for (var i = 0; i < connectionInfo.length; i++) {
-                        window.vertexInfo[i] = new Array();
+                        window.vertexInfo[i] = new Array(3);
                     }
                     for (var i = 0; i < connectionInfo.length; i++) {
-                        window.connectionInfo[i] = new Array();
+                        window.connectionInfo[i] = new Array(3);
                     }
+                    //console.log(window.vertexInfo[0]);
                     var povezave = new Array();
                     var koordinate = new Array();
                     var stevecPovezav = 0;
@@ -70,51 +76,52 @@
                             // Dobim array temp, ki vsebuje info o koordinatah vozlisca
                             for (var j = 1; j < line_length; j++) {
                                 temp[j - 1] = lineInfo[j];
+                                window.vertexInfo[stevecInfo][j - 1] = temp[j - 1];
                             }
-                            // console.log("type of global array connectionInfo = " + typeof(vertexInfo[0]));
-                            window.vertexInfo[stevecInfo].push(temp);
+
                             // Povecam stevec global array-a, ki hrani informacije o vseh koordinatah vseh vozlisch
                             stevecInfo++;
                         } else if (lines[i][0] == 'f') {
                             for (var j = 1; j < line_length; j++) {
                                 temp[j - 1] = lineInfo[j];
+                                window.connectionInfo[stevecPovezav][j - 1] = temp[j - 1];
                             }
                             // console.log("temp povezave = " + temp);
-                            window.connectionInfo[stevecPovezav].push(temp);
                             stevecPovezav++;
                             //console.log("type elementa temp pri povezavah = " + typeof(temp));
                         }
 
                     }
 
-                     for (var i = 0; i < window.vertexInfo.length; i++) {
-                        // console.log(window.vertexInfo[i]);
-                        for (var j = 0; j < window.vertexInfo[i].length; j++) {
-                            console.log(parseFloat(window.vertexInfo[i][j]));
-                        }
-                    }
-                    /*
-                    ctx.beginPath();
-                    for (var i = 0; i < window.vertexInfo.length; i++) {
-                        if (i == 0) {
-                            console.log("sem v i = 0");
-                            console.log("koordinata x = " + centerX + parseFloat(window.vertexInfo[i][0]));
-                            console.log("koordinata y = " + centerY + parseFloat(window.vertexInfo[i][1]));
-                            ctx.moveTo(centerX + parseFloat(window.vertexInfo[i][0]), centerY + parseFloat(window.vertexInfo[i][1]));
-                        } else {
-                            console.log("sem v i = " + i);
-                            console.log("koordinata x = " + centerX + parseFloat(window.vertexInfo[i][0]));
-                            console.log("koordinata y = " + centerY + parseFloat(window.vertexInfo[i][1]));
-                            ctx.lineTo(centerX + parseFloat(window.vertexInfo[i][0]), centerY + parseFloat(window.vertexInfo[i][1]));
-                        }
-                    }
-                    ctx.stroke();
-                    */
+                    draw(window.vertexInfo, window.connectionInfo);
 
                 };
                 reader.readAsText(file);
             };
         });
+
+
+        function draw(vertexInfo, connectionInfo) {
+            ctx.beginPath();
+            console.log(typeof(centerX));
+            console.log(typeof(parseInt(window.vertexInfo[1][0])));
+
+
+            for (var i = 0; i < window.vertexInfo.length; i++) {
+                if (i == 0) {
+                    console.log("sem v i = 0");
+                    console.log(parseInt(window.vertexInfo[i][0]) * oneUnit);
+                    console.log(parseInt(window.vertexInfo[i][1]) * oneUnit);
+                    ctx.moveTo(parseInt(window.vertexInfo[i][0]) * oneUnit, parseInt(window.vertexInfo[i][1]) * oneUnit);
+                } else {
+                    console.log("sem v i = " + i);
+                    console.log(parseInt(window.vertexInfo[i][0]) * oneUnit);
+                    console.log(parseInt(window.vertexInfo[i][1]) * oneUnit);
+                    ctx.lineTo(parseInt(window.vertexInfo[i][0]) * oneUnit, parseInt(window.vertexInfo[i][1]) * oneUnit);
+                }
+            }
+            ctx.stroke();
+        }
     </script>
 
 
