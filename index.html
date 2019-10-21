@@ -52,7 +52,7 @@
                         list.push(lines[line]);
                     }
 
-                    window.connectionInfo.length = (lines.length - 1) / 2
+                    window.connectionInfo.length = (lines.length - 1) / 2;
                     global_length = window.connectionInfo.length;
 
                     //Obema globalnima array-ema vsako polje definiram kot array
@@ -108,20 +108,42 @@
             window.addEventListener("keypress", keyPressHandler, false);
         });
 
+        function clearCanvas(){
+            ctx.save();
+
+            // Use the identity matrix while clearing the canvas
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Restore the transform
+            ctx.restore();
+        }
         function keyPressHandler(event) {
             var keyCode = event.keyCode;
             if (keyCode == 119 || keyCode == 87) {
                 translate(0, 1, 0);
                 console.log("MOVE UP");
+                clearCanvas();
+                draw(vertexInfo, connectionInfo);
+                
             }
             if (keyCode == 115 || keyCode == 83) {
                 console.log("MOVE DOWN");
+                translate(0, -1, 0);
+                clearCanvas();
+                draw(vertexInfo, connectionInfo);
             }
             if (keyCode == 97 || keyCode == 65) {
                 console.log("MOVE LEFT");
+                translate(-1, 0, 0);
+                clearCanvas();
+                draw(vertexInfo, connectionInfo);
             }
             if (keyCode == 100 || keyCode == 68) {
                 console.log("MOVE RIGHT");
+                translate(1, 0, 0);
+                clearCanvas();
+                draw(vertexInfo, connectionInfo);
             }
         }
 
@@ -135,7 +157,7 @@
             console.log(matrix);
 
 
-            /*
+            
             for (var i = 0; i < window.vertexInfo.length; i++) {
                 if (i == 0) {
                     console.log("sem v i = 0");
@@ -150,7 +172,7 @@
                 }
             }
             ctx.stroke();
-            */
+            
         }
 
         function rotateX(alpha) {
@@ -171,28 +193,38 @@
             translateMatrix[3] = dx;
             translateMatrix[7] = dy;
             translateMatrix[11] = dz;
-            console.log(window.vertexInfo);
-            console.log(translateMatrix);
+            
+            //console.log("vertexInto = " + window.vertexInfo);
+            //console.log("translateMatrix = " + translateMatrix);
             var temp = new Array(4);
-
+            
             for (var i = 0; i < window.vertexInfo.length; i++) {
                 //Podatke iz 3 koordinat razširimo na 4 in na 3. mesto v arrayju pripnemo vrednost 1 (w = 1)
                 for (var k = 0; k < 3; k++) {
                     temp[k] = parseInt(window.vertexInfo[i][k]);
                 }
                 temp[3] = 1;
-                console.log(temp);
+                //console.log(temp);
 
                 var sum = 0;
-                for (var j = 0 + premikTranslateMatrike; j < 4; j++) {
-                    sum += translateMatrix[j + premikTranslateMatrike] * temp[j];
-                    console.log("sum = " + sum);
+                premikTranslateMatrike = 0;
+                //console.log("začetek vertexInfo = " + window.vertexInfo[i]);
+                for (var j = 0; j < 4; j++) {
+                    sum = 0;
+                    for(var k = 0; k < 4; k++){
+                        //console.log("premikTranslateMatrike = ", + premikTranslateMatrike);
+                        //console.log("temp =                   ", + temp[k]);
+                        //console.log("translateMatrik =        ", translateMatrix[k+premikTranslateMatrike]);
+                        sum += translateMatrix[k + premikTranslateMatrike] * temp[k];
+                        //console.log("sum = " + sum);
+                    }
+                    premikTranslateMatrike += 4;
+                    if(j != 3){
+                        window.vertexInfo[i][j] = parseFloat(sum);
+                    }   
+                    
                 }
-                premikTranslateMatrike += 4;
-
-                window.vertexInfo[i] = sum;
             }
-
             console.log(window.vertexInfo);
         }
 
