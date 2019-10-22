@@ -145,6 +145,31 @@
                 clearCanvas();
                 draw(vertexInfo, connectionInfo);
             }
+            if(keyCode == 81 || keyCode == 113){
+                console.log("ZOOM IN");
+            }
+            if(keyCode == 69 || keyCode == 101){
+                console.log("ZOOM OUT");
+            }
+            if(keyCode == 118 || keyCode == 86){
+                console.log("SCALE");
+                var sx = prompt("Please enter sx", sx);
+                var sy = prompt("Please enter sy", sy);
+                var sz = prompt("Please enter sz", sz);
+                console.log(sx,sy,sz);
+                scale(sx, sy, sz);
+                clearCanvas();
+                draw(vertexInfo, connectionInfo);
+            }
+            if(keyCode == 88 || keyCode == 120){
+                console.log("ROTATE X");
+            }
+            if(keyCode == 89 || keyCode == 121){
+                console.log("ROTATE Y");
+            }
+            if(keyCode == 90 || keyCode == 122){
+                console.log("ROTATE Z");
+            }
         }
 
         function draw(vertexInfo, connectionInfo) {
@@ -160,17 +185,13 @@
             
             for (var i = 0; i < window.vertexInfo.length; i++) {
                 if (i == 0) {
-                    console.log("sem v i = 0");
-                    console.log(parseInt(window.vertexInfo[i][0]) * oneUnit);
-                    console.log(parseInt(window.vertexInfo[i][1]) * oneUnit);
                     ctx.moveTo(parseInt(window.vertexInfo[i][0]) * oneUnit, parseInt(window.vertexInfo[i][1]) * oneUnit);
                 } else {
-                    console.log("sem v i = " + i);
-                    console.log(parseInt(window.vertexInfo[i][0]) * oneUnit);
-                    console.log(parseInt(window.vertexInfo[i][1]) * oneUnit);
                     ctx.lineTo(parseInt(window.vertexInfo[i][0]) * oneUnit, parseInt(window.vertexInfo[i][1]) * oneUnit);
                 }
+                console.log(vertexInfo[i]);
             }
+            
             ctx.stroke();
             
         }
@@ -193,30 +214,21 @@
             translateMatrix[3] = dx;
             translateMatrix[7] = dy;
             translateMatrix[11] = dz;
-            
-            //console.log("vertexInto = " + window.vertexInfo);
-            //console.log("translateMatrix = " + translateMatrix);
+
             var temp = new Array(4);
             
             for (var i = 0; i < window.vertexInfo.length; i++) {
-                //Podatke iz 3 koordinat razširimo na 4 in na 3. mesto v arrayju pripnemo vrednost 1 (w = 1)
                 for (var k = 0; k < 3; k++) {
                     temp[k] = parseInt(window.vertexInfo[i][k]);
                 }
                 temp[3] = 1;
-                //console.log(temp);
 
                 var sum = 0;
                 premikTranslateMatrike = 0;
-                //console.log("začetek vertexInfo = " + window.vertexInfo[i]);
                 for (var j = 0; j < 4; j++) {
                     sum = 0;
                     for(var k = 0; k < 4; k++){
-                        //console.log("premikTranslateMatrike = ", + premikTranslateMatrike);
-                        //console.log("temp =                   ", + temp[k]);
-                        //console.log("translateMatrik =        ", translateMatrix[k+premikTranslateMatrike]);
                         sum += translateMatrix[k + premikTranslateMatrike] * temp[k];
-                        //console.log("sum = " + sum);
                     }
                     premikTranslateMatrike += 4;
                     if(j != 3){
@@ -229,6 +241,78 @@
         }
 
         function scale(sx, sy, sz) {
+            var translateMatrix = glMatrix.mat4.create();
+            var premikTranslateMatrike = 0;
+            if(sx == 0){
+                sx = 1;
+            }
+            if(sy == 0){
+                sy = 1;
+            }
+            if(sz == 0){
+                sz = 1;
+            }
+            translateMatrix[0] = sx;
+            translateMatrix[5] = sy;
+            translateMatrix[10] = sz;
+            var flag = 0;
+            var temp = new Array(4);
+            
+            var minX = 10000;
+            var minY = 10000;
+            var minZ = 10000;
+
+            var razlikaX = 0;
+            var razlikaY = 0;
+            var razlikaZ = 0;
+
+            var koordinate = new Array(3);
+
+            for(var i = 0; i < window.vertexInfo.length; i++){
+                for(var j = 0; j < 3; j++){
+                    koordinate[j] = parseInt(window.vertexInfo[i][j]);
+                }
+                if(koordinate[0] <= minX && koordinate[1] <= minY && koordinate[2] <= minZ){
+                    razlikaX = koordinate[0];
+                    razlikaY = koordinate[1];
+                    razlikaZ = koordinate[2];
+                }
+            }
+
+            console.log("koordinata najblizje izhodiscu = " + razlikaX + ", " + razlikaY + ", " + razlikaZ);
+
+            for (var i = 0; i < window.vertexInfo.length; i++) {
+                for (var k = 0; k < 3; k++) {
+                    temp[k] = parseInt(window.vertexInfo[i][k]);
+                }
+
+                temp[3] = 1;
+                var sum = 0;
+                premikTranslateMatrike = 0;
+                for (var j = 0; j < 4; j++) {
+                    sum = 0;
+                    for(var k = 0; k < 4; k++){
+                        if(k == 0){
+                            temp[k] -= razlikaX;
+                        }
+                        else if(k == 1){
+                            temp[k] -= razlikaY;
+                        }
+                        else if(k == 2){
+                            temp[k] -= razlikaZ;
+                        }
+                        sum += translateMatrix[k + premikTranslateMatrike] * temp[k];
+                    }
+                    premikTranslateMatrike += 4;
+                    if(j != 3){
+                        window.vertexInfo[i][j] = parseFloat(sum);
+                    }   
+                    
+                }
+
+                
+            }
+            console.log(window.vertexInfo);
 
         }
 
@@ -245,6 +329,10 @@
     <!--document.getElementById.addEventListener("keypress", myScript); -->
     <p>
         Press W: Move up Press <br>Press S: Move down <br>Press D: Move right <br>Press A: Move left<br>
+    </p>
+
+    <p>
+        Press V: Custom scale <br> Press X: Rotate over X axis <br> Press Y: Rotate over Y axis <br> Press Z: Rotate over Z axis <br>
     </p>
 
 </footer>
